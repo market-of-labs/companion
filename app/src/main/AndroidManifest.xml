@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 8+ 的「特殊权限」：需用户在系统设置里为本应用打开「允许安装未知应用」 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!--
+      电视支持（单 APK 自适应）：
+      leanback required=false + touchscreen required=false 是电视应用的标准声明 ——
+      如果 touchscreen 不置 false，Play 会认为本应用需要触摸屏，从而在电视上不可见。
+      本应用同时支持手机与电视，所以两者都必须 required=false。
+    -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <!--
+      ⚠️ 这段 <queries> 不可删（规格 01 §3.3 陷阱三）。
+      Android 11 (API 30) 起的包可见性限制下，queryIntentActivities 默认返回空列表；
+      缺了它，「目标发现」会静默失效 —— 应用永远以为设备上没装 Obtainium，并反复引导安装。
+
+      后两块是给系统安装器用的：通过 content:// 投递 APK 时，
+      resolveActivity 也需要能看到能处理 package-archive 的应用。
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="obtainium" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.android.package-archive" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:banner="@drawable/tv_banner"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- 电视启动器入口：少了这条，应用不会出现在 Android TV 的主屏上 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <!--
+          自带的极简 FileProvider 等价物（见 ApkProvider.kt）。
+          exported=false + grantUriPermissions=true：只有拿到我们显式授予的
+          FLAG_GRANT_READ_URI_PERMISSION 的接收方（系统安装器）能读，其余一律拒绝。
+        -->
+        <provider
+            android:name=".ApkProvider"
+            android:authorities="${applicationId}.apk"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+    </application>
+
+</manifest>

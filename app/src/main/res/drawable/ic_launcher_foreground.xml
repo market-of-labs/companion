@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  自适应图标前景（108×108 视口，内容收在中间 72×72 的安全区内）。
+  图形语义：一个箱子 + 向下的箭头 =「把东西取回本地」，也就是这个应用做的事。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 箱盖 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,36 L78,36 L78,47 L30,47 Z" />
+
+    <!-- 箱体 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,51 L74,51 L74,79 L34,79 Z" />
+
+    <!-- 向下的箭头（蓝色，取自 launcher_background） -->
+    <path
+        android:fillColor="#3B6FF5"
+        android:pathData="M50,56 L58,56 L58,66 L50,66 Z" />
+    <path
+        android:fillColor="#3B6FF5"
+        android:pathData="M44,64 L64,64 L54,74 Z" />
+</vector>

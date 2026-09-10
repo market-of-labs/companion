@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android TV 的主屏横幅，规格固定 320×180（`android:banner` 指向它，缺了它应用不会出现在电视主屏上）。
+  矢量里画不了文字，所以用图形表达：左边一个「取回本地」的箱子，右边三条列表项 = 应用清单。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- 整幅底色：比应用内深色主题再深一档，保证在电视主屏的浅色/深色背景下都能看清 -->
+    <path
+        android:fillColor="#16307E"
+        android:pathData="M0,0 L320,0 L320,180 L0,180 Z" />
+
+    <!-- 箱子 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,48 L104,48 L104,60 L40,60 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,64 L99,64 L99,124 L45,124 Z" />
+
+    <!-- 向下箭头 -->
+    <path
+        android:fillColor="#16307E"
+        android:pathData="M68,72 L76,72 L76,92 L68,92 Z" />
+    <path
+        android:fillColor="#16307E"
+        android:pathData="M60,90 L84,90 L72,106 Z" />
+
+    <!-- 右侧列表：暗示「一份应用清单」 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M140,56 L288,56 L288,70 L140,70 Z" />
+    <path
+        android:fillColor="#9BB8FF"
+        android:pathData="M140,86 L246,86 L246,100 L140,100 Z" />
+    <path
+        android:fillColor="#9BB8FF"
+        android:pathData="M140,116 L208,116 L208,130 L140,130 Z" />
+</vector>

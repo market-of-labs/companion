@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 2,
+  "exportedAt": "2026-09-10T00:00:00Z",
+  "generatedBy": "fixture",
+  "apps": [
+    {
+      "id": "dev.imranr.obtainium",
+      "name": "Obtainium",
+      "author": "ImranR98",
+      "kind": "obtainium",
+      "url": "https://market.invalid/dev.imranr.obtainium",
+      "overrideSource": "HTML",
+      "latestVersion": "1.6.15",
+      "apkUrls": "[[\"dev.imranr.obtainium-1.6.15-universal.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-release.apk\"],[\"dev.imranr.obtainium-1.6.15-arm64-v8a.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-arm64-v8a-release.apk\"],[\"dev.imranr.obtainium-1.6.15-armeabi-v7a.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-armeabi-v7a-release.apk\"],[\"dev.imranr.obtainium-1.6.15-x86_64.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-x86_64-release.apk\"]]",
+      "otherAssetUrls": "[]",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"versionCode\":1615}",
+      "releaseDate": 1789576800000,
+      "changeLog": "",
+      "categories": []
+    },
+    {
+      "id": "com.example.variantdemo",
+      "name": "多变体演示（未安装的包）",
+      "author": "fixture",
+      "url": "https://market.invalid/com.example.variantdemo",
+      "overrideSource": "HTML",
+      "latestVersion": "1.6.15",
+      "apkUrls": "[[\"com.example.variantdemo-1.6.15-universal.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-release.apk\"],[\"com.example.variantdemo-1.6.15-arm64-v8a.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-arm64-v8a-release.apk\"],[\"com.example.variantdemo-1.6.15-armeabi-v7a.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-armeabi-v7a-release.apk\"],[\"com.example.variantdemo-1.6.15-x86_64.apk\",\"https://github.com/ImranR98/Obtainium/releases/download/v1.6.15/app-x86_64-release.apk\"]]",
+      "otherAssetUrls": "[]",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"versionCode\":1615}",
+      "releaseDate": 1789576800000,
+      "changeLog": "",
+      "categories": []
+    },
+    {
+      "id": "com.obtainium.companion",
+      "name": "私有市场同步器",
+      "author": "market-of-labs",
+      "kind": "companion",
+      "url": "https://market.invalid/com.obtainium.companion",
+      "overrideSource": "HTML",
+      "latestVersion": "1.0.0",
+      "apkUrls": "[[\"com.obtainium.companion-1.0.0-universal.apk\",\"https://github.com/market-of-labs/store/releases/download/com.obtainium.companion/com.obtainium.companion-1.0.0-universal.apk\"]]",
+      "otherAssetUrls": "[]",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"versionCode\":1}",
+      "releaseDate": 1789576800000,
+      "changeLog": "",
+      "categories": []
+    }
+  ]
+}

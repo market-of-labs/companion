@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 应用名只有这一个出处：主界面标题也读它（见 MainActivity）。 -->
+    <string name="app_name">私有市场同步器</string>
+</resources>

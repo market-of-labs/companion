@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 与 ui/Theme.kt 的 Brand.Blue 保持一致；改一处记得改另一处。 -->
+    <color name="launcher_background">#3B6FF5</color>
+    <color name="window_background">#FBF9FD</color>
+</resources>

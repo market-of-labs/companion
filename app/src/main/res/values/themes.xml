@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      纯 Compose 应用不需要 AppCompat 主题，用平台自带的 Material 主题即可
+      （省掉一整个 appcompat 依赖）。NoActionBar 是必须的：Compose 自己画标题。
+      浅色优先 —— 深色分支由电视主题（ui/Theme.kt 的 TvTheme）在运行时决定。
+    -->
+    <style name="AppTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

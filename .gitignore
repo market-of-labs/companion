@@ -1,0 +1,34 @@
+# ---- 构建产物 ----
+build/
+.gradle/
+.kotlin/
+captures/
+
+# AGP 9 的新 DSL 把「变体产物」落在模块根下的 <变体名>/ 目录里，
+# 而不是老的 build/outputs/ —— 例如 app/release/ 里是 APK、baselineProfiles/、output-metadata.json。
+# 多一个变体（debug、staging…）就会多一个这样的目录，届时照样加进来。
+app/release/
+app/debug/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# ---- 本地环境 ----
+local.properties
+.idea/
+*.iml
+.DS_Store
+
+# ---- 签名：绝不入库 ----
+# 自更新要求签名恒定，丢了 keystore 就再也无法覆盖安装 —— 请离线备份。
+key.properties
+*.jks
+*.keystore
+keystore.*
+
+# ---- Gradle wrapper 的二进制 ----
+# 与本机 Obtainium 工程同款处理：jar 不入库，由 Android Studio 首次 Sync
+# 或 `gradle wrapper` 生成。（gradle-wrapper.properties 要入库。）
+gradle/wrapper/gradle-wrapper.jar
