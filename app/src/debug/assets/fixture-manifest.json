@@ -15,7 +15,7 @@
       "otherAssetUrls": "[]",
       "preferredApkIndex": 0,
       "additionalSettings": "{\"versionCode\":1615}",
-      "releaseDate": 1789576800000,
+      "releaseDate": 1789576800000000,
       "changeLog": "",
       "categories": []
     },
@@ -30,7 +30,7 @@
       "otherAssetUrls": "[]",
       "preferredApkIndex": 0,
       "additionalSettings": "{\"versionCode\":1615}",
-      "releaseDate": 1789576800000,
+      "releaseDate": 1789576800000000,
       "changeLog": "",
       "categories": []
     },
@@ -46,7 +46,7 @@
       "otherAssetUrls": "[]",
       "preferredApkIndex": 0,
       "additionalSettings": "{\"versionCode\":1}",
-      "releaseDate": 1789576800000,
+      "releaseDate": 1789576800000000,
       "changeLog": "",
       "categories": []
     }
