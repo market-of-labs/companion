@@ -3,6 +3,7 @@ package com.obtainium.companion.ui
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.tv.material3.darkColorScheme
 
@@ -48,10 +49,31 @@ fun PhoneTheme(content: @Composable () -> Unit) {
 }
 
 /**
- * 电视主题。只给 `colorScheme`，其余走默认 ——
- * 这里依赖 `MaterialTheme` 三个参数都有默认值（Material3 与 tv-material3 都是这样）。
+ * 电视主题。
+ *
+ * 除了 `colorScheme`，这里**必须**自己提供 `LocalContentColor`，否则整个电视界面是黑底黑字。
+ *
+ * 原因是 tv-material3 与 material3 的一处关键差异：`androidx.tv.material3.MaterialTheme`
+ * 只提供 `LocalColorScheme` / `LocalShapes` / `LocalTextSelectionColors` / `LocalTypography`
+ * 四项，**不含** `LocalContentColor`；而后者的默认值在 `androidx.tv.material3.ContentColor.kt`
+ * 里写死为 `Color.Black`。而 `androidx.tv.material3.Text` 取色的顺序是
+ * `color -> style.color -> LocalContentColor.current`，所以**没显式传 color 的 `Text` 一律是黑的**。
+ * （`Button` 不受影响：它内部走 `ClickableSurface`，那条路会提供 contentColor。）
+ *
+ * 手机那套之所以从没暴露这个问题，是因为 `PhoneScreen` 的根节点是 material3 的 `Surface` ——
+ * `Surface` 会按自己的容器色算出 contentColor 并向下提供。电视这套的根节点是
+ * `Box(Modifier.background(...))`，一个纯 foundation 原语，不提供任何 composition local，
+ * 于是所有裸 `Text` 都直接落到那个默认的黑色上。
+ *
+ * 这个值给 `onBackground` 而不是按容器分别给：`TvDark` 里 `onBackground` 与 `onSurface`
+ * 同为 `#E6E8EF`，在 `surface` 卡片底上对比度同样足够。
  */
 @Composable
 fun TvTheme(content: @Composable () -> Unit) {
-    androidx.tv.material3.MaterialTheme(colorScheme = TvDark, content = content)
+    androidx.tv.material3.MaterialTheme(colorScheme = TvDark) {
+        CompositionLocalProvider(
+            androidx.tv.material3.LocalContentColor provides TvDark.onBackground,
+            content = content,
+        )
+    }
 }

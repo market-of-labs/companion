@@ -169,15 +169,32 @@ keyPassword=<...>
 
 ## 已知风险（未在本机验证）
 
-- **全部代码仍未编译过**。Sync 已跑过，但只走到依赖解析就失败了（见下面那条 compose/AGP 版本冲突），
-  Kotlin 源码一个字节都没有编译。上面所有 API 用法都是对着反编译/源码 jar 核过的，
-  但「核过」不等于「编译通过」。
+- **编译已通过，但界面只验到「能起来」这一层**。本机跑过一次完整构建，产物是
+  `app/release/app-release.apk`（AGP 9 新 DSL 把变体产物放在模块根下的 `<变体名>/`，
+  不是 `build/outputs/`）。所以「写错了 API」这类问题基本排除；剩下的是**运行时观感**——
+  布局、对比度、焦点顺序这些编译器管不着的东西。首版的电视界面黑底黑字就是这么漏过去的：
+  每个符号都能解析、能编译，但屏幕上什么都看不清。
+- **电视界面的观感全部靠读 tv-material3 源码推出，未在真机/电视上跑过**。
+  上面那条 `LocalContentColor` 是照源码定位并修掉的，但修完之后的实际观感
+  （大字号在 10 尺距离上够不够、焦点框在深色卡片上够不够醒目、48/32 的过扫描留白合不合适）
+  没有在电视或模拟器上确认过。
 - **tv-material 与 BOM 的版本落差**：`androidx.tv:tv-material:1.1.0` 自身是对 compose `1.10.3` 编译的，
   而 `compose-bom:2026.09.00` 解析到 `1.12.x`。Gradle 会取高版本（1.12.x），
   即 tv-material 1.1.0 跑在比它新的 compose 上。AndroidX 内部通常二进制兼容，但这是**唯一**的运行时风险点。
-  为把暴露面压到最小，`ui/TvScreen.kt` **刻意只用了 `androidx.tv.material3` 的三个成员**
-  （`MaterialTheme` / `Text` / `Button`），其余全部用 Compose foundation 原语手写
+  为把暴露面压到最小，电视渲染路径**总共只碰 `androidx.tv.material3` 的四个成员**：
+  `MaterialTheme` / `Text` / `Button`（`ui/TvScreen.kt`）与 `LocalContentColor`（`ui/Theme.kt`
+  的 `TvTheme`，且这一个**不可省**，见下条）。其余全部用 Compose foundation 原语手写
   —— 包括进度条和那个全屏选择覆盖层（tv-material3 没有对话框组件）。
+- **tv-material3 不提供 `LocalContentColor`（已修，但极易复发）**：`androidx.tv.material3.MaterialTheme`
+  只提供 `LocalColorScheme` / `LocalShapes` / `LocalTextSelectionColors` / `LocalTypography` 四项，
+  **不含** `LocalContentColor`；后者在 `androidx.tv.material3.ContentColor.kt` 里默认 `Color.Black`，
+  而 `androidx.tv.material3.Text` 取色顺序是 `color -> style.color -> LocalContentColor.current`。
+  后果：根节点若不用 `Surface`（`TvScreen` 用的是 `Box(Modifier.background(...))`），
+  所有没显式传 `color` 的 `Text` 就是**黑底黑字**——首版主界面正是栽在这里（手机侧因为根节点是
+  material3 的 `Surface`，一直没暴露）。修法是在 `TvTheme` 里 `CompositionLocalProvider` 一个
+  `androidx.tv.material3.LocalContentColor`。**往电视界面加任何新的 tv-material3 组件时，
+  先确认它自己提不提供 contentColor**——只有 `CardContainer` / `ListItem` / `Surface` / `Switch` 提供，
+  `Button` 是走内部的 `ClickableSurface` 才顺带有的。
 - **compose 与 AGP 的版本耦合**：这不是「配错了一次」，而是这条链本身的形状 ——
   compose 1.12.x 要求 AGP ≥9.1.0，AGP 9.3.2 要求 Gradle ≥9.5.0。**将来单独升其中任何一个都可能触发
   另一条下限**，而且报错点离真正的原因很远（报的是依赖名，不是版本策略）。

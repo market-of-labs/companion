@@ -23,8 +23,8 @@ dependencyResolutionManagement {
 // 在自身元数据里要求 AGP ≥9.1.0，9.0.1 会直接拒绝。9.3.2 需要 Gradle ≥9.5.0（本机 9.7.1，满足）。
 // 选 9.3.2 而不是更新的 9.4.0：9.3.2 本机 Gradle 缓存里已有，Sync 不必再联网下载 AGP。
 plugins {
-    id("com.android.application") version "9.3.2" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.4.10" apply false
+    id("com.android.application") version "9.4.0" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.20" apply false
 }
 
 rootProject.name = "companion"

@@ -42,11 +42,15 @@ import com.obtainium.companion.Notice
 /**
  * 电视界面：10 尺 UI（大字号、深色、D-pad 焦点态、5% 过扫描留白）。
  *
- * **刻意只用 `androidx.tv.material3` 的三个成员：`MaterialTheme` / `Text` / `Button`。**
+ * **电视渲染路径总共只碰 `androidx.tv.material3` 的四个成员：`MaterialTheme` / `Text` / `Button`
+ * （在本文件）与 `LocalContentColor`（在 `Theme.kt` 的 `TvTheme` 里）。**
  * 其余一律用 Compose foundation 原语（`Box`/`Row`/`background`/`border`）拼。
  * 理由：tv-material3 是独立于 material3 演进的一套库，版本对齐的构件越多、
  * 撞上 API 改动的概率越大；而 10 尺 UI 真正需要的「大字号 + 焦点可见 + 深色」,
  * 用 foundation 一样能表达，且不受任何版本漂移影响。
+ *
+ * 注意最后那个 `LocalContentColor` **不是可选项**：本文件的 `Text` 都指望环境里有个合理的
+ * contentColor，而 tv-material3 的 `MaterialTheme` 不提供它（默认黑）。详见 `Theme.kt`。
  *
  * 对话框也自己做（覆盖层而非 `AlertDialog`）—— tv-material3 没有对话框组件。
  */
