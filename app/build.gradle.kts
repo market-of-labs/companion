@@ -23,10 +23,16 @@ val appVersionCode = (localProperties.getProperty("companion.versionCode") ?: "1
 val appVersionName = localProperties.getProperty("companion.versionName") ?: "1.0.0"
 
 // 第一期内置默认清单地址（规格 01 §2.1）。部署期切 CF 后，用户可在设置页改，无需发版。
+//
 // apps.json 在 store 仓库的**根目录**（不在 store/ 子目录里）—— 那个子目录只放 index.json 与
-// endpoints.json 这类不直接伺服给客户端的东西。所以这里的路径是 /main/apps.json。
+// endpoints.json 这类不直接伺服给客户端的东西。所以路径是 /apps.json，不会有 store/store 的重段。
+//
+// 分支名是 **master**，不是 main —— store 仓库的默认分支就叫 master，照抄 raw 直链时必须用对，
+// 写错会在设备上表现为 404（清单拉不下来）。注意 companion 仓库自己用的是 main，两者不同名，
+// 这是有意的：改地址比改默认分支的代价小（后者要动远端与本地跟踪分支）。
+// 部署期切到 CF 后这段整个作废（地址变成 https://<cf域>/manifest）。
 val defaultManifestUrl = localProperties.getProperty("companion.manifestUrl")
-    ?: "https://raw.githubusercontent.com/market-of-labs/store/main/apps.json"
+    ?: "https://raw.githubusercontent.com/market-of-labs/store/master/apps.json"
 
 // 这里刻意不写 kotlin { compilerOptions { jvmTarget = ... } }：
 // 内置 Kotlin 下 jvmTarget 的默认值就是 android.compileOptions.targetCompatibility，
