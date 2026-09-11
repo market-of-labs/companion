@@ -23,8 +23,10 @@ val appVersionCode = (localProperties.getProperty("companion.versionCode") ?: "1
 val appVersionName = localProperties.getProperty("companion.versionName") ?: "1.0.0"
 
 // 第一期内置默认清单地址（规格 01 §2.1）。部署期切 CF 后，用户可在设置页改，无需发版。
+// apps.json 在 store 仓库的**根目录**（不在 store/ 子目录里）—— 那个子目录只放 index.json 与
+// endpoints.json 这类不直接伺服给客户端的东西。所以这里的路径是 /main/apps.json。
 val defaultManifestUrl = localProperties.getProperty("companion.manifestUrl")
-    ?: "https://raw.githubusercontent.com/market-of-labs/store/main/store/apps.json"
+    ?: "https://raw.githubusercontent.com/market-of-labs/store/main/apps.json"
 
 // 这里刻意不写 kotlin { compilerOptions { jvmTarget = ... } }：
 // 内置 Kotlin 下 jvmTarget 的默认值就是 android.compileOptions.targetCompatibility，

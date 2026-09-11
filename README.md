@@ -136,8 +136,8 @@ keyPassword=<...>
 主界面出现「伴侣应用 x.y.z 可用」+「更新」按钮。**不要**在 fixture 里放真能下载的 companion URL，
 否则会真的触发一次安装 —— 那条 URL 要等第一期发布后才存在。
 
-也可以用**真清单**验：`market-of-labs/store` 里 `com.obtainium.companion` 条目的 `additionalSettings.versionCode`
-现在是 `100`。把它调大再刷新即可。
+也可以用**真清单**验：`market-of-labs/store` **仓库根目录的 `apps.json`**（不在 `store/` 子目录里）中
+`com.obtainium.companion` 条目的 `additionalSettings.versionCode` 现在是 `100`。把它调大再刷新即可。
 
 ### 验容错（坏条目被跳过而不是整份作废）
 
