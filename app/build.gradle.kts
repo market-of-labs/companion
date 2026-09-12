@@ -24,8 +24,8 @@ val appVersionName = localProperties.getProperty("companion.versionName") ?: "1.
 
 // 第一期内置默认清单地址（规格 01 §2.1）。部署期切 CF 后，用户可在设置页改，无需发版。
 //
-// apps.json 在 store 仓库的**根目录**（不在 store/ 子目录里）—— 那个子目录只放 index.json 与
-// endpoints.json 这类不直接伺服给客户端的东西。所以路径是 /apps.json，不会有 store/store 的重段。
+// apps.json 在 store 仓库的**根目录**（不在 store/ 子目录里）—— 那个子目录只放 endpoints.json
+// 这类不直接伺服给客户端的东西。所以路径是 /apps.json，不会有 store/store 的重段。
 //
 // 分支名是 **master**，不是 main —— store 仓库的默认分支就叫 master，照抄 raw 直链时必须用对，
 // 写错会在设备上表现为 404（清单拉不下来）。注意 companion 仓库自己用的是 main，两者不同名，
