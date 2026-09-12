@@ -1,0 +1,97 @@
+name: release
+
+# 发布 release 时构建签名 APK，并把它挂到**同一个** release 上。
+#
+# 用 published 而不是 created：created 对草稿也触发，那会为一份还没公开的 release
+# 先挂上资产。而往 release 上挂资产不会再触发 release 事件，所以这里不会自己递归。
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write # 挂资产要写权限；同仓库发布用 GITHUB_TOKEN 就够，不需要 PAT
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21" # 与 app/build.gradle.kts 里 17 的 target 不冲突：AGP 9 / Gradle 9 都跑在 21 上
+
+      # 仓库里没有 gradlew（wrapper jar 有意不入库，见 .gitignore），所以显式给版本。
+      # 这个版本号与 gradle/wrapper/gradle-wrapper.properties 对齐，改的时候两处一起改。
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.7.1"
+
+      # 版本号只存在于 local.properties（不入库），CI 上没有它就是个 1 / 1.0.0。
+      # 自更新靠 versionCode 递增：推一个 1 出去，设备就永远停在旧版本上，
+      # 所以这里从 tag 现算，而不是让默认值默默生效。
+      - name: 从 tag 算版本号
+        id: version
+        run: |
+          name="${TAG#v}"
+          if [[ ! "$name" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::release 的 tag 得是 vX.Y.Z 或 X.Y.Z 才推得出版本号（当前：$TAG）"
+            exit 1
+          fi
+          # 1.2.3 → 10203：同一个 tag 永远算出同一个 versionCode，且随版本单调递增。
+          code=$((10#${BASH_REMATCH[1]} * 10000 + 10#${BASH_REMATCH[2]} * 100 + 10#${BASH_REMATCH[3]}))
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      # 签名材料只从 secrets 取，且落在 $RUNNER_TEMP（工作区之外）——
+      # keystore 进了工作区，就有被失败时上传的 artifact 或后续步骤带走的风险。
+      - name: 还原 keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            # 没有它也能构建，但产物是未签名的：覆盖安装会失败，自更新链直接断掉。
+            # 与其发一个装不上去的 APK，不如在这里停下。
+            echo "::error::缺少 secret KEYSTORE_BASE64（还有 KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD）"
+            exit 1
+          fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      - name: 写 key.properties / local.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          {
+            echo "storeFile=$RUNNER_TEMP/release.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > key.properties
+
+          {
+            echo "companion.versionName=${{ steps.version.outputs.name }}"
+            echo "companion.versionCode=${{ steps.version.outputs.code }}"
+          } > local.properties
+
+      - name: 构建 release APK
+        run: gradle assembleRelease
+
+      # 产物在 app/release/ 下（AGP 9 把变体产物放在模块根，不再是 build/outputs/）。
+      # 用 find 而不是写死文件名：签名生效与否会决定它叫 app-release.apk 还是 -unsigned。
+      - name: 挂到 release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          apk=$(find app -name '*.apk' -not -path '*/debug/*' | head -1)
+          if [ -z "$apk" ]; then
+            echo "::error::没找到 APK —— 看看 app/ 下的产物目录是不是变了"
+            exit 1
+          fi
+          echo "上传 $apk（$(du -h "$apk" | cut -f1)）"
+          # --clobber：job 重跑时覆盖上一次挂上去的同名资产，而不是失败。
+          gh release upload "$TAG" "$apk" --clobber
